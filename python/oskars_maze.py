@@ -16,7 +16,8 @@ import numpy as np
 from numpy.ma import make_mask
 
 
-# TODO: Done in haste. Check that these aren't flipped in some way.
+# Note: The commercial product does not have labeled axes.
+#       The labeling of axes used here was chosen arbitrarily.
 class OskarsMaze:
     # Front side
     xy = """
@@ -35,29 +36,29 @@ class OskarsMaze:
     # Left side
     yz = """
         ***********
-        * *     * *
-        * ***** * *
-        *   *   * *
-        * * * * * *
-        * * * *   *
-        *** * *****
-        * * *     *
-        * * *** * *
+        *   *     *
+        * ***** ***
         *       * *
+        * ******* *
+        * *     * *
+        * * *** * *
+        *   *     *
+        *** * *****
+        *   *     *
         ***********"""
 
-    # Top side
-    xz = """
+    # Bottom side
+    zx = """
         ***********
-        *     *   *
+        *       * *
+        * * *** * *
+        * *   *   *
         * *** *** *
-        *   * *   *
-        * * *** ***
+        *   * * * *
+        ***** * * *
         * *     * *
-        * ***** * *
-        *   *   * *
-        *** ***** *
-        *         *
+        * * ***** *
+        *   *     *
         ***********"""
 
 
@@ -70,12 +71,12 @@ def get_corners():
     return [(x, y, z) for x in [1, 9] for y in [1, 9] for z in [1, 9]]
 
 
-def get_cube(xy, yz, xz):
+def get_cube(xy, yz, zx):
     xyz = np.zeros((11, 11, 11), dtype=bool)
     for x in range(0, 11):
         for y in range(0, 11):
             for z in range(0, 11):
-                if xy[(x, y)] or yz[(y, z)] or xz[(x, z)]:
+                if xy[(x, y)] or yz[(y, z)] or zx[(z, x)]:
                     xyz[(x, y, z)] = True
     return xyz
 
@@ -126,8 +127,8 @@ def get_panel(s):
 def make_maze(do_remove_nonbranching_nodes=True):
     panel_xy = get_panel(OskarsMaze.xy)
     panel_yz = get_panel(OskarsMaze.yz)
-    panel_xz = get_panel(OskarsMaze.xz)
-    cube = get_cube(panel_xy, panel_yz, panel_xz)
+    panel_zx = get_panel(OskarsMaze.zx)
+    cube = get_cube(panel_xy, panel_yz, panel_zx)
     maze = get_maze(cube, do_remove_nonbranching_nodes)
     return maze
 
