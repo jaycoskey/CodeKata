@@ -33,7 +33,13 @@ def binop(op, op_token):
 
 
 class Expr(ABC):
-    pass
+    def cata(self, f):
+        cata_f = lambda x: x.cata(f)
+        fmapped = self.fmap(cata_f)
+        return f(fmapped)
+
+    def eval_with(self, f):
+        return self.cata(f)
 
 
 class ExprConst(Expr):
@@ -73,12 +79,7 @@ setattr(Expr, '__mul__',     lambda self, other: ExprMul(self, other))
 setattr(Expr, '__sub__',     lambda self, other: ExprSub(self, other))
 
 
-def cata(f, x):
-    cata_f = lambda x: cata(f, x)
-    fmap_x = x.fmap(cata_f)
-    return f(fmap_x)
-
-def evalExpr(expr):
+def evaluate(expr):
     return expr.evaluation()
 
 
@@ -88,8 +89,8 @@ def expr_eval_demo():
     three = ExprConst(3)
     four = ExprConst(4)
     x = one + two * three / four
-    x_str = cata(str, x)
-    x_val = cata(evalExpr, x)
+    x_str = x.eval_with(str)
+    x_val = x.eval_with(evaluate)
     print(f'Expression as string: {x_str}')
     print(f'Expression evaluated: {x_val}')
 
