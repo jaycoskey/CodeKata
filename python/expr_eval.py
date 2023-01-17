@@ -33,6 +33,7 @@ def binop(op, op_token):
 
 
 class Expr(ABC):
+    # Compare with the fixed-point combinator.
     def cata(self, f):
         cata_f = lambda x: x.cata(f)
         fmapped = self.fmap(cata_f)
