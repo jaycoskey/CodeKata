@@ -73,9 +73,10 @@ setattr(Expr, '__mul__',     lambda self, other: ExprMul(self, other))
 setattr(Expr, '__sub__',     lambda self, other: ExprSub(self, other))
 
 
-def cata(f):
-    return lambda expr: f(expr.fmap(cata(f)))
-
+def cata(f, x):
+    cata_f = lambda x: cata(f, x)
+    fmap_x = x.fmap(cata_f)
+    return f(fmap_x)
 
 def evalExpr(expr):
     return expr.evaluation()
@@ -87,8 +88,10 @@ def expr_eval_demo():
     three = ExprConst(3)
     four = ExprConst(4)
     x = one + two * three / four
-    print(cata(str)(x))
-    print(cata(evalExpr)(x))
+    x_str = cata(str, x)
+    x_val = cata(evalExpr, x)
+    print(f'Expression as string: {x_str}')
+    print(f'Expression evaluated: {x_val}')
 
 
 if __name__ == '__main__':
